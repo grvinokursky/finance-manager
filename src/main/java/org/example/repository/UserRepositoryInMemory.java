@@ -26,6 +26,7 @@ public class UserRepositoryInMemory implements UserRepository {
         user.setPassword(password);
 
         dataContainer.getUsers().add(user);
+        dataContainer.saveData();
 
         return user;
     }

@@ -27,6 +27,7 @@ public class WalletRepositoryInMemory implements WalletRepository {
         incomeCategory.setName(name);
 
         wallet.getIncomeCategories().add(incomeCategory);
+        dataContainer.saveData();
     }
 
     @Override
@@ -42,6 +43,7 @@ public class WalletRepositoryInMemory implements WalletRepository {
         expensesCategory.setLimit(limit);
 
         wallet.getExpensesCategories().add(expensesCategory);
+        dataContainer.saveData();
     }
 
     @Override
@@ -58,6 +60,7 @@ public class WalletRepositoryInMemory implements WalletRepository {
         incomeOperation.setValue(value);
 
         wallet.getIncomeOperations().add(incomeOperation);
+        dataContainer.saveData();
     }
 
     @Override
@@ -74,6 +77,7 @@ public class WalletRepositoryInMemory implements WalletRepository {
         expensesOperation.setValue(value);
 
         wallet.getExpensesOperations().add(expensesOperation);
+        dataContainer.saveData();
     }
 
     @Override
