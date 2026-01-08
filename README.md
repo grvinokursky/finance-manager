@@ -18,22 +18,22 @@
 
 После запуска приложения вам потребуется выполнить авторизацию. Доступные команды:
 
-- registration (сокращенно reg) \<username\> \<password\> - Регистрация пользователя.
-- login (сокращенно l) \<username\> \<password\> - Авторизация пользователя.
+- `registration (сокращенно reg) <username> <password>` - Регистрация пользователя.
+- `login (сокращенно l) <username> <password>` - Авторизация пользователя.
 
 ### Сервис управления финансами
 
 После авторизации будет запущен сервис управления финансами. Доступные команды:
 
-- create-income-category \<categoryName\> - Добавить категорию доходов.
-- create-expenses-category \<expensesCategoryName\> \<limit\> - Добавить категорию расходов, требуется указать лимит по расходам (лимит должен быть целым числом).
-- add-income-operation \<categoryName\> \<value\> - Добавить операцию доходов.
-- add-expenses-operation \<categoryName\> \<value\> - Добавить операцию расходов.
-- show-all-info - Отобразить общую статистику.
-- show-info-by-income - Отобразить статистику по доходам.
-- show-info-by-expenses - Отобразить статистику по расходам.
-- show-info-by-categories \<categoryName1\>,\<categoryName2\>,...\<categoryNameN\> - Отобразить статистику по выбранным категориям (перечислите категории через запятую без пробелов.
-- exit - Выход из аккаунта.
+- `create-income-category <categoryName>` - Добавить категорию доходов.
+- `create-expenses-category <expensesCategoryName> <limit>` - Добавить категорию расходов, требуется указать лимит по расходам (лимит должен быть целым числом).
+- `add-income-operation <categoryName> <value>` - Добавить операцию доходов.
+- `add-expenses-operation <categoryName> <value>` - Добавить операцию расходов.
+- `show-all-info` - Отобразить общую статистику.
+- `show-info-by-income` - Отобразить статистику по доходам.
+- `show-info-by-expenses` - Отобразить статистику по расходам.
+- `show-info-by-categories <categoryName1>,<categoryName2>,...<categoryNameN>` - Отобразить статистику по выбранным категориям (перечислите категории через запятую без пробелов.
+- `exit` - Выход из аккаунта.
 
 ## Описание решения
 
