@@ -5,7 +5,7 @@ import java.util.UUID;
 public class UserModel {
     private final UUID id;
     private String login;
-    private String password;
+    private String passwordHash;
     private WalletModel wallet;
 
     public UserModel() {
@@ -25,12 +25,12 @@ public class UserModel {
         this.login = login;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public WalletModel getWallet() {

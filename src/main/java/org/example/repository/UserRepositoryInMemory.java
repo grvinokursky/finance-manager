@@ -16,14 +16,14 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     @Override
-    public UserModel create(String login, String password) throws Exception {
+    public UserModel create(String login, String passwordHash) throws Exception {
         if (dataContainer.getUsers().stream().anyMatch(u -> Objects.equals(u.getLogin(), login))) {
             throw new Exception(String.format("Пользователь с указанным логином '%s' уже существует.", login));
         }
 
         var user = new UserModel();
         user.setLogin(login);
-        user.setPassword(password);
+        user.setPasswordHash(passwordHash);
 
         dataContainer.getUsers().add(user);
         dataContainer.saveData();

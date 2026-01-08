@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class DataContainer {
-    private final String pathDataFile = "data/data.json";
+    private final String pathDataFile = "./data.json";
     private final ObjectMapper mapper;
 
     private List<UserModel> users;
@@ -25,8 +25,8 @@ public class DataContainer {
     public DataContainer() {
         users = new ArrayList<>();
         mapper = new ObjectMapper();
-        mapper.findAndRegisterModules(); // для LocalDate/Time и т.п.
-        mapper.enable(SerializationFeature.INDENT_OUTPUT); // красивый отступ
+        mapper.findAndRegisterModules();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
