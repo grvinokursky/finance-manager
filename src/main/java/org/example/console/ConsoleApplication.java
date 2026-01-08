@@ -6,6 +6,7 @@ import org.example.services.WalletService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -101,6 +102,7 @@ public class ConsoleApplication implements CommandLineRunner {
                     var value = parseWithRuException(commandWords[2]);
                     walletService.addExpensesOperation(currentUser.getWallet().getId(), commandWords[1], value);
                     System.out.println("Операция успешно добавлена.");
+                    printWarningIfExceedExpendedCategoryLimit(commandWords[1]);
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить операцию. %s%n", e.getMessage());
                 }
@@ -112,7 +114,7 @@ public class ConsoleApplication implements CommandLineRunner {
                         System.out.printf("Общий доход: %s%n", report.getTotalIncome());
                         System.out.println("Доходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByIncomeCategories()) {
-                            System.out.printf("-%s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
+                            System.out.printf("- %s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
                         }
                     } else {
                         System.out.println("Нет категорий доходов");
@@ -122,7 +124,7 @@ public class ConsoleApplication implements CommandLineRunner {
                         System.out.printf("Общие расходы: %s%n", report.getTotalExpenses());
                         System.out.println("Расходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByExpensesCategories()) {
-                            System.out.printf("-%s: %s, Оставшийся бюджет: %s%n",
+                            System.out.printf("- %s: %s, Оставшийся бюджет: %s%n",
                                     statisticByCategory.getCategoryName(),
                                     statisticByCategory.getTotalExpenses(),
                                     statisticByCategory.getLimit() - statisticByCategory.getTotalExpenses());
@@ -142,7 +144,7 @@ public class ConsoleApplication implements CommandLineRunner {
                         System.out.printf("Общий доход: %s%n", report.getTotalIncome());
                         System.out.println("Доходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByIncomeCategories()) {
-                            System.out.printf("-%s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
+                            System.out.printf("- %s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
                         }
                     } else {
                         System.out.println("Нет категорий доходов");
@@ -158,7 +160,7 @@ public class ConsoleApplication implements CommandLineRunner {
                         System.out.printf("Общие расходы: %s%n", report.getTotalExpenses());
                         System.out.println("Расходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByExpensesCategories()) {
-                            System.out.printf("-%s: %s, Оставшийся бюджет: %s%n",
+                            System.out.printf("- %s: %s, Оставшийся бюджет: %s%n",
                                     statisticByCategory.getCategoryName(),
                                     statisticByCategory.getTotalExpenses(),
                                     statisticByCategory.getLimit() - statisticByCategory.getTotalExpenses());
@@ -172,7 +174,7 @@ public class ConsoleApplication implements CommandLineRunner {
             } else if (commandWords.length == 2 && Objects.equals(commandWords[0], "show-info-by-categories")) {
                 try {
                     var categories = commandWords[1].split(",");
-                    var report = walletService.getReportByCategories(currentUser.getWallet().getId(), categories);
+                    var report = walletService.getReportByCategories(currentUser.getWallet().getId(), Arrays.stream(categories).toList());
 
                     if (report.getStatisticsByIncomeCategories().isEmpty() && report.getStatisticsByExpensesCategories().isEmpty()) {
                         System.out.println("Не найдено статистики по указанным категориям.");
@@ -182,14 +184,14 @@ public class ConsoleApplication implements CommandLineRunner {
                     if (!report.getStatisticsByIncomeCategories().isEmpty()) {
                         System.out.println("Доходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByIncomeCategories()) {
-                            System.out.printf("-%s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
+                            System.out.printf("- %s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
                         }
                     }
 
                     if (!report.getStatisticsByExpensesCategories().isEmpty()) {
                         System.out.println("Расходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByExpensesCategories()) {
-                            System.out.printf("-%s: %s, Оставшийся бюджет: %s%n",
+                            System.out.printf("- %s: %s, Оставшийся бюджет: %s%n",
                                     statisticByCategory.getCategoryName(),
                                     statisticByCategory.getTotalExpenses(),
                                     statisticByCategory.getLimit() - statisticByCategory.getTotalExpenses());
@@ -206,6 +208,17 @@ public class ConsoleApplication implements CommandLineRunner {
             } else {
                 System.out.println("Не удалось распознать команду.");
             }
+        }
+    }
+
+    private void printWarningIfExceedExpendedCategoryLimit(String categoryName) {
+        try {
+            if (walletService.checkExceedExpensesCategoryLimit(currentUser.getWallet().getId(), categoryName)) {
+                System.out.printf("Обратите внимание, что по категории `%s` превышен лимит расходов.", categoryName);
+            }
+        } catch (Exception e) {
+            // ignore
+            // Если система будет развиваться можно будет писать в лог.
         }
     }
 

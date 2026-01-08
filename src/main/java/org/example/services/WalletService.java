@@ -60,9 +60,22 @@ public class WalletService {
             throw new Exception("Значение операции должно быть положительным числом");
         }
 
-        // Проверка на выход за лимит.
-
         walletRepository.addExpensesOperation(walletId, categoryName, value);
+    }
+
+    public boolean checkExceedExpensesCategoryLimit(UUID walletId, String categoryName) throws Exception {
+        var wallet = walletRepository.getWallet(walletId);
+        var category = wallet.getExpensesCategories().stream().filter(c -> Objects.equals(categoryName, c.getName())).findFirst();
+        if (category.isEmpty()) {
+            throw new Exception(String.format("Не удалось найти категорию `%s`.", categoryName));
+        }
+
+        var sumCategoryOperations = wallet.getExpensesOperations().stream()
+                .filter(o -> Objects.equals(categoryName, o.getExpensesCategoryModel().getName()))
+                .mapToInt(ExpensesOperationModel::getValue)
+                .sum();
+
+        return category.get().getLimit() < sumCategoryOperations;
     }
 
     public FullReport getFullReport(UUID walletId) throws Exception {
@@ -91,11 +104,11 @@ public class WalletService {
         return report;
     }
 
-    public ReportByCategories getReportByCategories(UUID walletId, String[] categoryNames) throws Exception {
+    public ReportByCategories getReportByCategories(UUID walletId, List<String> categoryNames) throws Exception {
         var wallet = walletRepository.getWallet(walletId);
         var report = new ReportByCategories();
-        report.setStatisticsByIncomeCategories(getStatisticsByIncomeCategories(wallet));
-        report.setStatisticsByExpensesCategories(getStatisticsByExpensesCategories(wallet));
+        report.setStatisticsByIncomeCategories(getStatisticsByIncomeCategories(wallet, categoryNames));
+        report.setStatisticsByExpensesCategories(getStatisticsByExpensesCategories(wallet, categoryNames));
         return report;
     }
 
@@ -122,8 +135,35 @@ public class WalletService {
                 .toList();
     }
 
+    private List<StatisticByIncomeCategory> getStatisticsByIncomeCategories(WalletModel wallet, List<String> categoryNames) {
+        return wallet.getIncomeCategories().stream()
+                .filter(c -> categoryNames.stream()
+                        .anyMatch(categoryName -> Objects.equals(categoryName, c.getName())))
+                .map(x -> new StatisticByIncomeCategory(
+                        x.getName(),
+                        wallet.getIncomeOperations().stream()
+                                .filter(o -> Objects.equals(o.getIncomeCategoryModel().getName(), x.getName()))
+                                .mapToInt(IncomeOperationModel::getValue)
+                                .sum()))
+                .toList();
+    }
+
     private List<StatisticByExpensesCategory> getStatisticsByExpensesCategories(WalletModel wallet) {
         return wallet.getExpensesCategories().stream()
+                .map(x -> new StatisticByExpensesCategory(
+                        x.getName(),
+                        wallet.getExpensesOperations().stream()
+                                .filter(o -> Objects.equals(o.getExpensesCategoryModel().getName(), x.getName()))
+                                .mapToInt(ExpensesOperationModel::getValue)
+                                .sum(),
+                        x.getLimit()))
+                .toList();
+    }
+
+    private List<StatisticByExpensesCategory> getStatisticsByExpensesCategories(WalletModel wallet, List<String> categoryNames) {
+        return wallet.getExpensesCategories().stream()
+                .filter(c -> categoryNames.stream()
+                        .anyMatch(categoryName -> Objects.equals(categoryName, c.getName())))
                 .map(x -> new StatisticByExpensesCategory(
                         x.getName(),
                         wallet.getExpensesOperations().stream()
