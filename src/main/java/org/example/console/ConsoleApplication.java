@@ -237,7 +237,7 @@ public class ConsoleApplication implements CommandLineRunner {
     }
 
     private void printFinanceManagerHelp() {
-        System.out.println("Доступные команды (при вводе копеек в денежных значениях в качестве разделителя используйте точку):");
+        System.out.println("Доступные команды:");
         System.out.println("help - Напечатать подсказки.");
         System.out.println("create-income-category <categoryName> - Добавить категорию доходов.");
         System.out.println("create-expenses-category <expensesCategoryName> <limit> - Добавить категорию расходов, требуется указать лимит по расходам.");
@@ -248,6 +248,7 @@ public class ConsoleApplication implements CommandLineRunner {
         System.out.println("show-info-by-expenses - Отобразить статистику по расходам.");
         System.out.println("show-info-by-categories <categoryName1>,<categoryName2>,...<categoryNameN> - Отобразить статистику по выбранным категориям (перечислите категории через запятую без пробелов.)");
         System.out.println("exit - Выход из аккаунта.");
+        System.out.println("При вводе копеек в денежных значениях в качестве разделителя используйте точку");
     }
 
     private long parseMoney(String strValue) throws Exception {
