@@ -2,7 +2,7 @@ package org.example.models;
 
 public class IncomeOperationModel {
     private IncomeCategoryModel incomeCategoryModel;
-    private int value;
+    private long valueAtPennies;
 
     public IncomeCategoryModel getIncomeCategoryModel() {
         return incomeCategoryModel;
@@ -12,11 +12,11 @@ public class IncomeOperationModel {
         this.incomeCategoryModel = incomeCategoryModel;
     }
 
-    public int getValue() {
-        return value;
+    public long getValueAtPennies() {
+        return valueAtPennies;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setValueAtPennies(long value) {
+        this.valueAtPennies = value;
     }
 }

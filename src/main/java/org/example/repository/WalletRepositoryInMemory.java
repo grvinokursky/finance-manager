@@ -31,7 +31,7 @@ public class WalletRepositoryInMemory implements WalletRepository {
     }
 
     @Override
-    public void createExpensesCategory(UUID walletId, String name, int limit) throws Exception {
+    public void createExpensesCategory(UUID walletId, String name, long limitAtPennies) throws Exception {
         var wallet = getWallet(walletId);
 
         if (wallet.getExpensesCategories().stream().anyMatch(x -> Objects.equals(x.getName(), name))) {
@@ -40,14 +40,14 @@ public class WalletRepositoryInMemory implements WalletRepository {
 
         var expensesCategory = new ExpensesCategoryModel();
         expensesCategory.setName(name);
-        expensesCategory.setLimit(limit);
+        expensesCategory.setLimitAtPennies(limitAtPennies);
 
         wallet.getExpensesCategories().add(expensesCategory);
         dataContainer.saveData();
     }
 
     @Override
-    public void addIncomeOperation(UUID walletId, String categoryName, int value) throws Exception {
+    public void addIncomeOperation(UUID walletId, String categoryName, long valueAtPennies) throws Exception {
         var wallet = getWallet(walletId);
 
         var incomeCategory = wallet.getIncomeCategories().stream().filter(x -> Objects.equals(x.getName(), categoryName)).findFirst();
@@ -57,14 +57,14 @@ public class WalletRepositoryInMemory implements WalletRepository {
 
         var incomeOperation = new IncomeOperationModel();
         incomeOperation.setIncomeCategoryModel(incomeCategory.get());
-        incomeOperation.setValue(value);
+        incomeOperation.setValueAtPennies(valueAtPennies);
 
         wallet.getIncomeOperations().add(incomeOperation);
         dataContainer.saveData();
     }
 
     @Override
-    public void addExpensesOperation(UUID walletId, String categoryName, int value) throws Exception {
+    public void addExpensesOperation(UUID walletId, String categoryName, long valueAtPennies) throws Exception {
         var wallet = getWallet(walletId);
 
         var expensesCategory = wallet.getExpensesCategories().stream().filter(x -> Objects.equals(x.getName(), categoryName)).findFirst();
@@ -74,7 +74,7 @@ public class WalletRepositoryInMemory implements WalletRepository {
 
         var expensesOperation = new ExpensesOperationModel();
         expensesOperation.setExpensesCategoryModel(expensesCategory.get());
-        expensesOperation.setValue(value);
+        expensesOperation.setValueAtPennies(valueAtPennies);
 
         wallet.getExpensesOperations().add(expensesOperation);
         dataContainer.saveData();

@@ -2,7 +2,7 @@ package org.example.models;
 
 public class ExpensesCategoryModel {
     private String name;
-    private int limit;
+    private long limitAtPennies;
 
     public String getName() {
         return name;
@@ -12,11 +12,11 @@ public class ExpensesCategoryModel {
         this.name = name;
     }
 
-    public int getLimit() {
-        return limit;
+    public long getLimitAtPennies() {
+        return limitAtPennies;
     }
 
-    public void setLimit(int limit) {
-        this.limit = limit;
+    public void setLimitAtPennies(long limitAtPennies) {
+        this.limitAtPennies = limitAtPennies;
     }
 }

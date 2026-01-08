@@ -6,6 +6,7 @@ import org.example.services.WalletService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
@@ -83,24 +84,24 @@ public class ConsoleApplication implements CommandLineRunner {
                 }
             } else if (commandWords.length == 3 && Objects.equals(commandWords[0], "create-expenses-category")) {
                 try {
-                    var limit = parseWithRuException(commandWords[2]);
-                    walletService.createExpensesCategory(currentUser.getWallet().getId(), commandWords[1], limit);
+                    var limitAtPennies = parseMoney(commandWords[2]);
+                    walletService.createExpensesCategory(currentUser.getWallet().getId(), commandWords[1], limitAtPennies);
                     System.out.printf("Категория `%s` успешно добавлена.%n", commandWords[1]);
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить категорию расходов. %s%n", e.getMessage());
                 }
             } else if (commandWords.length == 3 && Objects.equals(commandWords[0], "add-income-operation")) {
                 try {
-                    var value = parseWithRuException(commandWords[2]);
-                    walletService.addIncomeOperation(currentUser.getWallet().getId(), commandWords[1], value);
+                    var valueAtPennies = parseMoney(commandWords[2]);
+                    walletService.addIncomeOperation(currentUser.getWallet().getId(), commandWords[1], valueAtPennies);
                     System.out.println("Операция успешно добавлена.");
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить операцию. %s%n", e.getMessage());
                 }
             } else if (commandWords.length == 3 && Objects.equals(commandWords[0], "add-expenses-operation")) {
                 try {
-                    var value = parseWithRuException(commandWords[2]);
-                    walletService.addExpensesOperation(currentUser.getWallet().getId(), commandWords[1], value);
+                    var valueAtPennies = parseMoney(commandWords[2]);
+                    walletService.addExpensesOperation(currentUser.getWallet().getId(), commandWords[1], valueAtPennies);
                     System.out.println("Операция успешно добавлена.");
                     printWarningIfExceedExpendedCategoryLimit(commandWords[1]);
                 } catch (Exception e) {
@@ -111,23 +112,25 @@ public class ConsoleApplication implements CommandLineRunner {
                     var report = walletService.getFullReport(currentUser.getWallet().getId());
 
                     if (!report.getStatisticsByIncomeCategories().isEmpty()) {
-                        System.out.printf("Общий доход: %s%n", report.getTotalIncome());
+                        System.out.printf("Общий доход: %s%n", moneyAtPenniesToString(report.getTotalIncomeAtPennies()));
                         System.out.println("Доходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByIncomeCategories()) {
-                            System.out.printf("- %s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
+                            System.out.printf("- %s: %s%n",
+                                    statisticByCategory.getCategoryName(),
+                                    moneyAtPenniesToString(statisticByCategory.getTotalIncomeAtPennies()));
                         }
                     } else {
                         System.out.println("Нет категорий доходов");
                     }
 
                     if (!report.getStatisticsByExpensesCategories().isEmpty()) {
-                        System.out.printf("Общие расходы: %s%n", report.getTotalExpenses());
+                        System.out.printf("Общие расходы: %s%n", moneyAtPenniesToString(report.getTotalExpensesAtPennies()));
                         System.out.println("Расходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByExpensesCategories()) {
                             System.out.printf("- %s: %s, Оставшийся бюджет: %s%n",
                                     statisticByCategory.getCategoryName(),
-                                    statisticByCategory.getTotalExpenses(),
-                                    statisticByCategory.getLimit() - statisticByCategory.getTotalExpenses());
+                                    moneyAtPenniesToString(statisticByCategory.getTotalExpensesAtPennies()),
+                                    moneyAtPenniesToString(statisticByCategory.getLimitAtPennies() - statisticByCategory.getTotalExpensesAtPennies()));
                         }
                     } else {
                         System.out.println("Нет категорий расходов");
@@ -141,10 +144,12 @@ public class ConsoleApplication implements CommandLineRunner {
                     var report = walletService.getReportByIncome(currentUser.getWallet().getId());
 
                     if (!report.getStatisticsByIncomeCategories().isEmpty()) {
-                        System.out.printf("Общий доход: %s%n", report.getTotalIncome());
+                        System.out.printf("Общий доход: %s%n", moneyAtPenniesToString(report.getTotalIncomeAtPennies()));
                         System.out.println("Доходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByIncomeCategories()) {
-                            System.out.printf("- %s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
+                            System.out.printf("- %s: %s%n",
+                                    statisticByCategory.getCategoryName(),
+                                    moneyAtPenniesToString(statisticByCategory.getTotalIncomeAtPennies()));
                         }
                     } else {
                         System.out.println("Нет категорий доходов");
@@ -162,8 +167,8 @@ public class ConsoleApplication implements CommandLineRunner {
                         for (var statisticByCategory : report.getStatisticsByExpensesCategories()) {
                             System.out.printf("- %s: %s, Оставшийся бюджет: %s%n",
                                     statisticByCategory.getCategoryName(),
-                                    statisticByCategory.getTotalExpenses(),
-                                    statisticByCategory.getLimit() - statisticByCategory.getTotalExpenses());
+                                    moneyAtPenniesToString(statisticByCategory.getTotalExpensesAtPennies()),
+                                    moneyAtPenniesToString(statisticByCategory.getLimitAtPennies() - statisticByCategory.getTotalExpensesAtPennies()));
                         }
                     } else {
                         System.out.println("Нет категорий расходов");
@@ -184,7 +189,9 @@ public class ConsoleApplication implements CommandLineRunner {
                     if (!report.getStatisticsByIncomeCategories().isEmpty()) {
                         System.out.println("Доходы по категориям:");
                         for (var statisticByCategory : report.getStatisticsByIncomeCategories()) {
-                            System.out.printf("- %s: %s%n", statisticByCategory.getCategoryName(), statisticByCategory.getTotalIncome());
+                            System.out.printf("- %s: %s%n",
+                                    statisticByCategory.getCategoryName(),
+                                    moneyAtPenniesToString(statisticByCategory.getTotalIncomeAtPennies()));
                         }
                     }
 
@@ -193,8 +200,8 @@ public class ConsoleApplication implements CommandLineRunner {
                         for (var statisticByCategory : report.getStatisticsByExpensesCategories()) {
                             System.out.printf("- %s: %s, Оставшийся бюджет: %s%n",
                                     statisticByCategory.getCategoryName(),
-                                    statisticByCategory.getTotalExpenses(),
-                                    statisticByCategory.getLimit() - statisticByCategory.getTotalExpenses());
+                                    moneyAtPenniesToString(statisticByCategory.getTotalExpensesAtPennies()),
+                                    moneyAtPenniesToString(statisticByCategory.getLimitAtPennies() - statisticByCategory.getTotalExpensesAtPennies()));
                         }
                     }
                 } catch (Exception e) {
@@ -214,7 +221,7 @@ public class ConsoleApplication implements CommandLineRunner {
     private void printWarningIfExceedExpendedCategoryLimit(String categoryName) {
         try {
             if (walletService.checkExceedExpensesCategoryLimit(currentUser.getWallet().getId(), categoryName)) {
-                System.out.printf("Обратите внимание, что по категории `%s` превышен лимит расходов.", categoryName);
+                System.out.printf("Обратите внимание, что по категории `%s` превышен лимит расходов.%n", categoryName);
             }
         } catch (Exception e) {
             // ignore
@@ -225,15 +232,15 @@ public class ConsoleApplication implements CommandLineRunner {
     private void printAuthorizationHelp() {
         System.out.println("Доступные команды:");
         System.out.println("help - Напечатать подсказки.");
-        System.out.println("registration (сокращенно reg) <username> <password> - Регистрация пользователя.");
+        System.out.println("registration (сокращенно reg) <username> <password> - Регистрация пользователя (длина пароля должна быть не менее 6 символов).");
         System.out.println("login (сокращенно l) <username> <password> - Авторизация пользователя.");
     }
 
     private void printFinanceManagerHelp() {
-        System.out.println("Доступные команды:");
+        System.out.println("Доступные команды (при вводе копеек в денежных значениях в качестве разделителя используйте точку):");
         System.out.println("help - Напечатать подсказки.");
         System.out.println("create-income-category <categoryName> - Добавить категорию доходов.");
-        System.out.println("create-expenses-category <expensesCategoryName> <limit> - Добавить категорию расходов, требуется указать лимит по расходам (лимит должен быть целым числом).");
+        System.out.println("create-expenses-category <expensesCategoryName> <limit> - Добавить категорию расходов, требуется указать лимит по расходам.");
         System.out.println("add-income-operation <categoryName> <value> - Добавить операцию доходов.");
         System.out.println("add-expenses-operation <categoryName> <value> - Добавить операцию расходов.");
         System.out.println("show-all-info - Отобразить общую статистику.");
@@ -243,11 +250,30 @@ public class ConsoleApplication implements CommandLineRunner {
         System.out.println("exit - Выход из аккаунта.");
     }
 
-    private int parseWithRuException(String value) throws Exception {
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception e) {
-            throw new Exception(String.format("Не удалось считать значение - `%s` не является целым числом.", value));
+    private long parseMoney(String strValue) throws Exception {
+        var moneyMask = "^\\d+(\\.\\d{1,2})?$";
+        if (!strValue.matches(moneyMask)) {
+            throw new Exception("Не удалось считать число, несоответствие денежному формату.");
         }
+
+        try {
+            var monetaryValueInParts = strValue.split("\\.");
+            var value = Long.parseLong(monetaryValueInParts[0]) * 100;
+            if (monetaryValueInParts.length == 2 && monetaryValueInParts[1].length() == 1) {
+                value += Long.parseLong(monetaryValueInParts[1]) * 10;
+            } else if (monetaryValueInParts.length == 2 && monetaryValueInParts[1].length() == 2) {
+                value += Long.parseLong(monetaryValueInParts[1]);
+            }
+
+            return value;
+        } catch (Exception e) {
+            throw new Exception(String.format("Возникла неожиданная ошибка при конвертации числа `%s`.", strValue));
+        }
+    }
+
+    private String moneyAtPenniesToString(long moneyAtPennies) {
+        return BigDecimal.valueOf(moneyAtPennies, 2)
+                .stripTrailingZeros()
+                .toPlainString();
     }
 }

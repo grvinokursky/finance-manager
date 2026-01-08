@@ -3,17 +3,17 @@ package org.example.reports;
 import java.util.List;
 
 public class FullReport {
-    private int totalIncome;
+    private long totalIncomeAtPennies;
     private List<StatisticByIncomeCategory> statisticsByIncomeCategories;
-    private int totalExpenses;
+    private long totalExpensesAtPennies;
     private List<StatisticByExpensesCategory> statisticsByExpensesCategories;
 
-    public int getTotalIncome() {
-        return totalIncome;
+    public long getTotalIncomeAtPennies() {
+        return totalIncomeAtPennies;
     }
 
-    public void setTotalIncome(int totalIncome) {
-        this.totalIncome = totalIncome;
+    public void setTotalIncomeAtPennies(long totalIncomeAtPennies) {
+        this.totalIncomeAtPennies = totalIncomeAtPennies;
     }
 
     public List<StatisticByIncomeCategory> getStatisticsByIncomeCategories() {
@@ -24,12 +24,12 @@ public class FullReport {
         this.statisticsByIncomeCategories = statisticsByIncomeCategories;
     }
 
-    public int getTotalExpenses() {
-        return totalExpenses;
+    public long getTotalExpensesAtPennies() {
+        return totalExpensesAtPennies;
     }
 
-    public void setTotalExpenses(int totalExpenses) {
-        this.totalExpenses = totalExpenses;
+    public void setTotalExpensesAtPennies(long totalExpensesAtPennies) {
+        this.totalExpensesAtPennies = totalExpensesAtPennies;
     }
 
     public List<StatisticByExpensesCategory> getStatisticsByExpensesCategories() {

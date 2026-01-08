@@ -2,18 +2,18 @@ package org.example.reports;
 
 public class StatisticByIncomeCategory {
     private String categoryName;
-    private int totalIncome;
+    private long totalIncomeAtPennies;
 
-    public StatisticByIncomeCategory(String categoryName, int totalIncome) {
+    public StatisticByIncomeCategory(String categoryName, long totalIncomeAtPennies) {
         this.categoryName = categoryName;
-        this.totalIncome = totalIncome;
+        this.totalIncomeAtPennies = totalIncomeAtPennies;
     }
 
     public String getCategoryName() {
         return categoryName;
     }
 
-    public int getTotalIncome() {
-        return totalIncome;
+    public long getTotalIncomeAtPennies() {
+        return totalIncomeAtPennies;
     }
 }

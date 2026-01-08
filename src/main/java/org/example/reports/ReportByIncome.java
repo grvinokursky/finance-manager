@@ -3,15 +3,15 @@ package org.example.reports;
 import java.util.List;
 
 public class ReportByIncome {
-    private int totalIncome;
+    private long totalIncomeAtPennies;
     private List<StatisticByIncomeCategory> statisticsByIncomeCategories;
 
-    public int getTotalIncome() {
-        return totalIncome;
+    public long getTotalIncomeAtPennies() {
+        return totalIncomeAtPennies;
     }
 
-    public void setTotalIncome(int totalIncome) {
-        this.totalIncome = totalIncome;
+    public void setTotalIncomeAtPennies(long totalIncomeAtPennies) {
+        this.totalIncomeAtPennies = totalIncomeAtPennies;
     }
 
     public List<StatisticByIncomeCategory> getStatisticsByIncomeCategories() {

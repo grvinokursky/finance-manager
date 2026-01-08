@@ -2,24 +2,24 @@ package org.example.reports;
 
 public class StatisticByExpensesCategory {
     private String categoryName;
-    private int totalExpenses;
-    private int limit;
+    private long totalExpensesAtPennies;
+    private long limitAtPennies;
 
-    public StatisticByExpensesCategory(String categoryName, int totalExpenses, int limit) {
+    public StatisticByExpensesCategory(String categoryName, long totalExpensesAtPennies, long limitAtPennies) {
         this.categoryName = categoryName;
-        this.totalExpenses = totalExpenses;
-        this.limit = limit;
+        this.totalExpensesAtPennies = totalExpensesAtPennies;
+        this.limitAtPennies = limitAtPennies;
     }
 
     public String getCategoryName() {
         return categoryName;
     }
 
-    public int getTotalExpenses() {
-        return totalExpenses;
+    public long getTotalExpensesAtPennies() {
+        return totalExpensesAtPennies;
     }
 
-    public int getLimit() {
-        return limit;
+    public long getLimitAtPennies() {
+        return limitAtPennies;
     }
 }

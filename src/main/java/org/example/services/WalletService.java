@@ -27,40 +27,40 @@ public class WalletService {
         walletRepository.createIncomeCategory(walletId, name);
     }
 
-    public void createExpensesCategory(UUID walletId, String name, int limit) throws Exception {
+    public void createExpensesCategory(UUID walletId, String name, long limitAtPennies) throws Exception {
         if (name.isEmpty()) {
             throw new Exception("Наименование категории не может быть пустым.");
         }
 
-        if (limit<=0) {
+        if (limitAtPennies<=0) {
             throw new Exception("Значение лимита должно быть положительным числом");
         }
 
-        walletRepository.createExpensesCategory(walletId, name, limit);
+        walletRepository.createExpensesCategory(walletId, name, limitAtPennies);
     }
 
-    public void addIncomeOperation(UUID walletId, String categoryName, int value) throws Exception {
+    public void addIncomeOperation(UUID walletId, String categoryName, long valueAtPennies) throws Exception {
         if (categoryName.isEmpty()) {
             throw new Exception("Наименование категории не может быть пустым.");
         }
 
-        if (value<=0) {
+        if (valueAtPennies<=0) {
             throw new Exception("Значение операции должно быть положительным числом");
         }
 
-        walletRepository.addIncomeOperation(walletId, categoryName, value);
+        walletRepository.addIncomeOperation(walletId, categoryName, valueAtPennies);
     }
 
-    public void addExpensesOperation(UUID walletId, String categoryName, int value) throws Exception {
+    public void addExpensesOperation(UUID walletId, String categoryName, long valueAtPennies) throws Exception {
         if (categoryName.isEmpty()) {
             throw new Exception("Наименование категории не может быть пустым.");
         }
 
-        if (value<=0) {
+        if (valueAtPennies<=0) {
             throw new Exception("Значение операции должно быть положительным числом");
         }
 
-        walletRepository.addExpensesOperation(walletId, categoryName, value);
+        walletRepository.addExpensesOperation(walletId, categoryName, valueAtPennies);
     }
 
     public boolean checkExceedExpensesCategoryLimit(UUID walletId, String categoryName) throws Exception {
@@ -72,18 +72,18 @@ public class WalletService {
 
         var sumCategoryOperations = wallet.getExpensesOperations().stream()
                 .filter(o -> Objects.equals(categoryName, o.getExpensesCategoryModel().getName()))
-                .mapToInt(ExpensesOperationModel::getValue)
+                .mapToLong(ExpensesOperationModel::getValueAtPennies)
                 .sum();
 
-        return category.get().getLimit() < sumCategoryOperations;
+        return category.get().getLimitAtPennies() < sumCategoryOperations;
     }
 
     public FullReport getFullReport(UUID walletId) throws Exception {
         var wallet = walletRepository.getWallet(walletId);
         var report = new FullReport();
-        report.setTotalIncome(getTotalIncome(wallet));
+        report.setTotalIncomeAtPennies(getTotalIncomeAtPennies(wallet));
         report.setStatisticsByIncomeCategories(getStatisticsByIncomeCategories(wallet));
-        report.setTotalExpenses(getTotalExpenses(wallet));
+        report.setTotalExpensesAtPennies(getTotalExpensesAtPennies(wallet));
         report.setStatisticsByExpensesCategories(getStatisticsByExpensesCategories(wallet));
         return report;
     }
@@ -91,7 +91,7 @@ public class WalletService {
     public ReportByIncome getReportByIncome(UUID walletId) throws Exception {
         var wallet = walletRepository.getWallet(walletId);
         var report = new ReportByIncome();
-        report.setTotalIncome(getTotalIncome(wallet));
+        report.setTotalIncomeAtPennies(getTotalIncomeAtPennies(wallet));
         report.setStatisticsByIncomeCategories(getStatisticsByIncomeCategories(wallet));
         return report;
     }
@@ -99,7 +99,7 @@ public class WalletService {
     public ReportByExpenses getReportByExpenses(UUID walletId) throws Exception {
         var wallet = walletRepository.getWallet(walletId);
         var report = new ReportByExpenses();
-        report.setTotalExpenses(getTotalExpenses(wallet));
+        report.setTotalExpenses(getTotalExpensesAtPennies(wallet));
         report.setStatisticsByExpensesCategories(getStatisticsByExpensesCategories(wallet));
         return report;
     }
@@ -112,15 +112,15 @@ public class WalletService {
         return report;
     }
 
-    private int getTotalIncome(WalletModel wallet) {
+    private long getTotalIncomeAtPennies(WalletModel wallet) {
         return wallet.getIncomeOperations().stream()
-                .mapToInt(IncomeOperationModel::getValue)
+                .mapToLong(IncomeOperationModel::getValueAtPennies)
                 .sum();
     }
 
-    private int getTotalExpenses(WalletModel wallet) {
+    private long getTotalExpensesAtPennies(WalletModel wallet) {
         return wallet.getExpensesOperations().stream()
-                .mapToInt(ExpensesOperationModel::getValue)
+                .mapToLong(ExpensesOperationModel::getValueAtPennies)
                 .sum();
     }
 
@@ -130,7 +130,7 @@ public class WalletService {
                         x.getName(),
                         wallet.getIncomeOperations().stream()
                                 .filter(o -> Objects.equals(o.getIncomeCategoryModel().getName(), x.getName()))
-                                .mapToInt(IncomeOperationModel::getValue)
+                                .mapToLong(IncomeOperationModel::getValueAtPennies)
                                 .sum()))
                 .toList();
     }
@@ -143,7 +143,7 @@ public class WalletService {
                         x.getName(),
                         wallet.getIncomeOperations().stream()
                                 .filter(o -> Objects.equals(o.getIncomeCategoryModel().getName(), x.getName()))
-                                .mapToInt(IncomeOperationModel::getValue)
+                                .mapToLong(IncomeOperationModel::getValueAtPennies)
                                 .sum()))
                 .toList();
     }
@@ -154,9 +154,9 @@ public class WalletService {
                         x.getName(),
                         wallet.getExpensesOperations().stream()
                                 .filter(o -> Objects.equals(o.getExpensesCategoryModel().getName(), x.getName()))
-                                .mapToInt(ExpensesOperationModel::getValue)
+                                .mapToLong(ExpensesOperationModel::getValueAtPennies)
                                 .sum(),
-                        x.getLimit()))
+                        x.getLimitAtPennies()))
                 .toList();
     }
 
@@ -168,9 +168,9 @@ public class WalletService {
                         x.getName(),
                         wallet.getExpensesOperations().stream()
                                 .filter(o -> Objects.equals(o.getExpensesCategoryModel().getName(), x.getName()))
-                                .mapToInt(ExpensesOperationModel::getValue)
+                                .mapToLong(ExpensesOperationModel::getValueAtPennies)
                                 .sum(),
-                        x.getLimit()))
+                        x.getLimitAtPennies()))
                 .toList();
     }
 }
