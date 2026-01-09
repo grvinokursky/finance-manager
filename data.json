@@ -1,0 +1,64 @@
+[ {
+  "id" : "44137c1c-dd0a-4d86-9c55-b39383f3af4f",
+  "login" : "grvinokursky",
+  "passwordHash" : "$2a$10$.CfoRRpe66AadGT0fQm7U.EzaWQUzVGjo35IIn.Rh1wGRa5vl1efO",
+  "wallet" : {
+    "id" : "837de0f1-d59a-4d37-acec-d6cf7b6ceb78",
+    "incomeCategories" : [ {
+      "name" : "Зарплата"
+    }, {
+      "name" : "Бонус"
+    } ],
+    "expensesCategories" : [ {
+      "name" : "Еда",
+      "limitAtPennies" : 2000000
+    }, {
+      "name" : "Развлечения",
+      "limitAtPennies" : 500000
+    }, {
+      "name" : "Коммунальные услуги",
+      "limitAtPennies" : 1000000
+    } ],
+    "incomeOperations" : [ {
+      "incomeCategoryModel" : {
+        "name" : "Зарплата"
+      },
+      "valueAtPennies" : 2000000
+    }, {
+      "incomeCategoryModel" : {
+        "name" : "Зарплата"
+      },
+      "valueAtPennies" : 4000000
+    }, {
+      "incomeCategoryModel" : {
+        "name" : "Бонус"
+      },
+      "valueAtPennies" : 300000
+    } ],
+    "expensesOperations" : [ {
+      "expensesCategoryModel" : {
+        "name" : "Еда",
+        "limitAtPennies" : 2000000
+      },
+      "valueAtPennies" : 30000
+    }, {
+      "expensesCategoryModel" : {
+        "name" : "Еда",
+        "limitAtPennies" : 2000000
+      },
+      "valueAtPennies" : 50000
+    }, {
+      "expensesCategoryModel" : {
+        "name" : "Развлечения",
+        "limitAtPennies" : 500000
+      },
+      "valueAtPennies" : 300000
+    }, {
+      "expensesCategoryModel" : {
+        "name" : "Коммунальные услуги",
+        "limitAtPennies" : 1000000
+      },
+      "valueAtPennies" : 300000
+    } ]
+  }
+} ]

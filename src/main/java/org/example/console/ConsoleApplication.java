@@ -254,7 +254,7 @@ public class ConsoleApplication implements CommandLineRunner {
         System.out.println("show-info-by-expenses - Отобразить статистику по расходам.");
         System.out.println("show-info-by-categories: <categoryName1> && <categoryName2> ... && <categoryNameN> - Отобразить статистику по выбранным категориям (перечислите категории через символы '&&').");
         System.out.println("exit - Выход из аккаунта.");
-        System.out.println("При вводе копеек в денежных значениях в качестве разделителя используйте точку");
+        System.out.println("При вводе копеек в денежных значениях в качестве разделителя используйте точку.");
     }
 
     private long parseMoney(String strValue) throws Exception {
