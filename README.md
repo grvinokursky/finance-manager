@@ -9,7 +9,7 @@
 ## Быстрый старт
 
 1. Убедитесь что на вашем компьютере установлен JDK 25.
-2. [**Скачайте по ссылке**](https://drive.google.com/file/d/1t8PzwYbHWl2enA1blbOpTYHhFhhNYwPB/view?usp=sharing) и распакуйте на своем компьютере архив с приложением.
+2. [**Скачайте по ссылке**](https://drive.google.com/file/d/1yDD7dI6WKfN7Th7nIC_7U74E6Ra4Ejaw/view?usp=sharing) и распакуйте на своем компьютере архив с приложением.
 3. Из директории архива выполните команду `java -jar "finance-manager-1.0-SNAPSHOT.jar"`
 
 Альтернативный вариант запуска приложения через IntelliJ IDEA.
