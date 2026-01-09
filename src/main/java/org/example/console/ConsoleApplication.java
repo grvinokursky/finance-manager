@@ -75,35 +75,39 @@ public class ConsoleApplication implements CommandLineRunner {
             var commandLine = sc.nextLine();
             var commandWords = commandLine.split(" ");
 
-            if (commandWords.length == 2 && (Objects.equals(commandWords[0], "create-income-category"))) {
+            if (commandWords.length >= 2 && (Objects.equals(commandWords[0], "create-income-category"))) {
                 try {
-                    walletService.createIncomeCategory(currentUser.getWallet().getId(), commandWords[1]);
-                    System.out.printf("Категория `%s` успешно добавлена.%n", commandWords[1]);
+                    var categoryName = String.join(" ", Arrays.stream(commandWords).toList().subList(1, commandWords.length));
+                    walletService.createIncomeCategory(currentUser.getWallet().getId(), categoryName);
+                    System.out.printf("Категория `%s` успешно добавлена.%n", categoryName);
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить категорию доходов. %s%n", e.getMessage());
                 }
-            } else if (commandWords.length == 3 && Objects.equals(commandWords[0], "create-expenses-category")) {
+            } else if (commandWords.length >= 3 && Objects.equals(commandWords[0], "create-expenses-category")) {
                 try {
-                    var limitAtPennies = parseMoney(commandWords[2]);
-                    walletService.createExpensesCategory(currentUser.getWallet().getId(), commandWords[1], limitAtPennies);
-                    System.out.printf("Категория `%s` успешно добавлена.%n", commandWords[1]);
+                    var categoryName = String.join(" ", Arrays.stream(commandWords).toList().subList(1, commandWords.length - 1));
+                    var limitAtPennies = parseMoney(commandWords[commandWords.length - 1]);
+                    walletService.createExpensesCategory(currentUser.getWallet().getId(), categoryName, limitAtPennies);
+                    System.out.printf("Категория `%s` успешно добавлена.%n", categoryName);
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить категорию расходов. %s%n", e.getMessage());
                 }
-            } else if (commandWords.length == 3 && Objects.equals(commandWords[0], "add-income-operation")) {
+            } else if (commandWords.length >= 3 && Objects.equals(commandWords[0], "add-income-operation")) {
                 try {
-                    var valueAtPennies = parseMoney(commandWords[2]);
-                    walletService.addIncomeOperation(currentUser.getWallet().getId(), commandWords[1], valueAtPennies);
+                    var categoryName = String.join(" ", Arrays.stream(commandWords).toList().subList(1, commandWords.length - 1));
+                    var valueAtPennies = parseMoney(commandWords[commandWords.length - 1]);
+                    walletService.addIncomeOperation(currentUser.getWallet().getId(), categoryName, valueAtPennies);
                     System.out.println("Операция успешно добавлена.");
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить операцию. %s%n", e.getMessage());
                 }
-            } else if (commandWords.length == 3 && Objects.equals(commandWords[0], "add-expenses-operation")) {
+            } else if (commandWords.length >= 3 && Objects.equals(commandWords[0], "add-expenses-operation")) {
                 try {
-                    var valueAtPennies = parseMoney(commandWords[2]);
-                    walletService.addExpensesOperation(currentUser.getWallet().getId(), commandWords[1], valueAtPennies);
+                    var categoryName = String.join(" ", Arrays.stream(commandWords).toList().subList(1, commandWords.length - 1));
+                    var valueAtPennies = parseMoney(commandWords[commandWords.length - 1]);
+                    walletService.addExpensesOperation(currentUser.getWallet().getId(), categoryName, valueAtPennies);
                     System.out.println("Операция успешно добавлена.");
-                    printWarningIfExceedExpendedCategoryLimit(commandWords[1]);
+                    printWarningIfExceedExpendedCategoryLimit(categoryName);
                 } catch (Exception e) {
                     System.out.printf("Не удалось добавить операцию. %s%n", e.getMessage());
                 }
@@ -176,9 +180,11 @@ public class ConsoleApplication implements CommandLineRunner {
                 } catch (Exception e) {
                     System.out.printf("Не удалось получить статистику. %s%n", e.getMessage());
                 }
-            } else if (commandWords.length == 2 && Objects.equals(commandWords[0], "show-info-by-categories")) {
+            } else if (commandWords.length >= 2 && Objects.equals(commandWords[0], "show-info-by-categories:")) {
                 try {
-                    var categories = commandWords[1].split(",");
+                    var categories = commandLine.split(": ")[1]
+                            .split(" && ");
+
                     var report = walletService.getReportByCategories(currentUser.getWallet().getId(), Arrays.stream(categories).toList());
 
                     if (report.getStatisticsByIncomeCategories().isEmpty() && report.getStatisticsByExpensesCategories().isEmpty()) {
@@ -213,7 +219,7 @@ public class ConsoleApplication implements CommandLineRunner {
                 System.out.println("Вы вышли из аккаунта.");
                 return;
             } else {
-                System.out.println("Не удалось распознать команду.");
+                System.out.println("Невалидная команда, чтобы проверить допустимые команды введите `help`.");
             }
         }
     }
@@ -246,7 +252,7 @@ public class ConsoleApplication implements CommandLineRunner {
         System.out.println("show-all-info - Отобразить общую статистику.");
         System.out.println("show-info-by-income - Отобразить статистику по доходам.");
         System.out.println("show-info-by-expenses - Отобразить статистику по расходам.");
-        System.out.println("show-info-by-categories <categoryName1>,<categoryName2>,...<categoryNameN> - Отобразить статистику по выбранным категориям (перечислите категории через запятую без пробелов.)");
+        System.out.println("show-info-by-categories: <categoryName1> && <categoryName2> ... && <categoryNameN> - Отобразить статистику по выбранным категориям (перечислите категории через символы '&&').");
         System.out.println("exit - Выход из аккаунта.");
         System.out.println("При вводе копеек в денежных значениях в качестве разделителя используйте точку");
     }
